@@ -25,7 +25,7 @@ index_name = config[env]['algolia_index_name']
 log_file = config[env]['log_file']
 
 # logging
-logging.basicConfig(filename=log_file, level=logging.INFO)
+logging.basicConfig(filename='./logs/'+log_file, level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logging.info('App in {} environment'.format(env))
