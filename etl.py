@@ -84,7 +84,9 @@ class Data_process:
 
 
 class Df:
-
+    """ Contains a handful of dataFrame method
+    : param df: dataFrame
+    """
     def __init__(self, df):
         self.df = df
 
@@ -103,6 +105,7 @@ class Df:
             logger.warning(e)
             pass
         return self
+
 
 
 
