@@ -7,9 +7,10 @@ logger = logging.getLogger(__name__+' module')
 
 
 class Deco_db_log:
+
     actions_dic = {'create': ['creating', 'created'],
-                  'update': ['updating', 'updated'],
-                  'delete': ['deleting', 'deleted']}
+                   'update': ['updating', 'updated'],
+                   'delete': ['deleting', 'deleted']}
 
     def __init__(self):
         self.make_wrappers(self.actions_dic)
@@ -20,7 +21,7 @@ class Deco_db_log:
             def inner(*arg, **kwarg):
                 logger.info('{} records ...'.format(action_ing))
                 return_value = func(*arg, **kwarg)
-                logger.info('{} records {}'.format(len(arg[1]), action_ed)) #arg[0] is algo.self
+                logger.info('{} records {}'.format(len(arg[1]), action_ed))  # arg[0] is algo.self
                 logger.info('{}: {}'.format(action_ed, json.dumps(arg[1])))
                 return return_value
             return inner

@@ -48,8 +48,9 @@ class Compare:
 
 class Data_process:
 
-    def __init__(self, json, exhibitor=False, pairs=None, latest=False):
-        self._table = self.data_to_df(json)
+    def __init__(self, json_data, exhibitor=False, pairs=None, latest=False):
+        self._table = None
+        self.data_to_df(json_data)
         if latest:
             self._table.drop_df_cols()
         if exhibitor:
@@ -58,9 +59,9 @@ class Data_process:
                 self._table.rename_df_custom_field_column(pairs)
         self.df = self._table.df
 
-    @staticmethod
-    def data_to_df(json):
-        return Df(pd.DataFrame(json))
+    def data_to_df(self, json_data):
+        self._table = Df(pd.DataFrame(json_data))
+        return self
 
     @staticmethod
     def df_to_algolia(*dfs):

@@ -25,16 +25,22 @@ index_name = config[env]['algolia_index_name']
 log_file = config[env]['log_file']
 
 # logging
-logging.basicConfig(filename='./logs/'+log_file, level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
+fh = logging.FileHandler(filename='./logs/'+log_file)
+fh.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-logging.info('App in {} environment'.format(env))
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+logger.info('App in {} environment'.format(env))
 
 
-def process(exhibitor_url, custom_field_url = None):
+def main(exhibitors_url, custom_fields_url=None):
     logger.info('Process Start - {}'.format(datetime.now().strftime('%Y-%m-%d_%H:%M:%S')))
 
-    oem = Oem(exhibitor_url, custom_field_url)
+    oem = Oem(exhibitors_url, custom_fields_url)
     db = Algolia(app_id, admin_id, index_name)
     recs = Compare(oem.exhibitor, db.current_records, oem.custom_fields)
     if recs.to_create:
@@ -47,7 +53,7 @@ def process(exhibitor_url, custom_field_url = None):
 
 
 if __name__ == '__main__':
-    process(exhibitor_url, custom_field_url)
+    main(exhibitor_url, custom_field_url)
 
 
 
