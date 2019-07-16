@@ -1,4 +1,5 @@
 import configparser
+import json
 
 
 class Config:
@@ -13,5 +14,5 @@ class Config:
         self.log_file = self.config[env]['log_file']
         self.sender_email = self.config[env]['sender_email']
         self.email_password = self.config[env]['email_password']
-        self.receiver_email = self.config[env]['receiver_email']
+        self.receiver_emails = self.config[env]['receiver_email']
 

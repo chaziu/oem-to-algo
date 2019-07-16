@@ -1,12 +1,14 @@
 # Main
 from api import Oem
 from etl import Compare
-from algolia import Algolia
+from algolia import Algolia, db_logger
+from _email import Email
 import sys
 import logging
 from logs.logging import load_log_setting
 from datetime import datetime
 from config.configuration import Config
+
 
 try:
     env = 'live' if sys.argv[1] == 'live' else 'test'
@@ -15,23 +17,30 @@ except IndexError:
     env = 'test'
 
 cfg = Config(env, './config/config.ini')  # Credentials & Endpoints
+email = Email(cfg.sender_email, cfg.email_password) #Setup email
 load_log_setting(cfg.log_file)  # logging
 logger = logging.getLogger(__name__)
 
 
 def main(exhibitors_url, custom_fields_url=None):
     logger.info('App in {} environment'.format(env))
-    logger.info('Process Start - {}'.format(datetime.now().strftime('%Y-%m-%d_%H:%M:%S')))
+    start = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+    logger.info('Process Start - {}'.format(start))
     oem = Oem(exhibitors_url, custom_fields_url)
     db = Algolia(cfg.app_id, cfg.admin_id, cfg.index_name)
-    recs = Compare(oem.exhibitor, db.current_records, oem.custom_fields)
-    if recs.to_create:
-        db.create(recs.to_create)
-    if recs.to_update:
-        db.update(recs.to_update)
-    if recs.to_delete:
-        db.delete(recs.to_delete)
-    logger.info('process end - {}'.format(datetime.now().strftime('%Y-%m-%d_%H:%M:%S')))
+    delta_records = Compare(oem.exhibitor, db.current_records, oem.custom_fields)
+
+    if delta_records.to_create:
+        db.create(delta_records.to_create)
+    if delta_records.to_update:
+        db.update(delta_records.to_update)
+    if delta_records.to_delete:
+        db.delete(delta_records.to_delete)
+
+    email.send_result(cfg.receiver_emails, payload=delta_records)
+
+    end = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
+    logger.info('process end - {}'.format(end))
 
 
 if __name__ == '__main__':
