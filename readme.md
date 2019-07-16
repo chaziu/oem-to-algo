@@ -3,6 +3,7 @@
 #### To Start
   1. App requires  **config.ini** with api endpoints and algolia credential to be functional.
   2. Install all dependencies by CLI ```pip install -r requirements.txt```
+  
 #### Major Update Log
   * 2019-07-09 : Needed updated format of config.ini for environment setup
   * 2019-07-04 : Added logging & log saved to my_app.log
