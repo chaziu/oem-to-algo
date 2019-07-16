@@ -57,6 +57,8 @@ class Data_process:
             self._table.indexing_exhibitor_df()
             if pairs:
                 self._table.rename_df_custom_field_column(pairs)
+        if latest and exhibitor and pairs:
+            self._table.modify_col('Country', lambda x: x.replace(';', ''))
         self.df = self._table.df
 
     def data_to_df(self, json_data):
@@ -105,6 +107,10 @@ class Df:
         except KeyError as e:
             logger.warning(e)
             pass
+        return self
+
+    def modify_col(self,col,func):
+        self.df[col] = self.df[col].apply(func)
         return self
 
 

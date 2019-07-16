@@ -19,7 +19,6 @@ class Email:
         for a,v in self.__dict__.items():
             yield a,v
 
-
     def _payload_to_msg(self,payload,recipient):
         today = datetime.now().strftime('%Y-%m-%d')
 

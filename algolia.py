@@ -47,12 +47,12 @@ class Algolia:
     def create(self, records):
         self.index.save_objects(records, {'autoGenerateObjectIDIfNotExist': True})
 
-    @db_logger.update
+    @db_logger.delete
     def delete(self, records):
         obj_ids = [rec['objectID'] for rec in records]
         self.index.delete_objects(obj_ids)
 
-    @db_logger.delete
+    @db_logger.update
     def update(self, records):
         self.index.partial_update_objects(records)
 

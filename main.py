@@ -37,7 +37,8 @@ def main(exhibitors_url, custom_fields_url=None):
     if delta_records.to_delete:
         db.delete(delta_records.to_delete)
 
-    email.send_result(cfg.receiver_emails, payload=delta_records)
+    if any([delta_records.to_create, delta_records.to_create, delta_records.to_create]):
+        email.send_result(cfg.receiver_emails, payload=delta_records)
 
     end = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     logger.info('process end - {}'.format(end))
