@@ -1,10 +1,10 @@
 # Main
-
 from api import Oem
 from etl import Compare
 from algolia import Algolia
 import sys
 import logging
+from logs.logging import load_log_setting
 from datetime import datetime
 from config.configuration import Config
 
@@ -14,23 +14,13 @@ except IndexError:
     print('No environment argument was passed')
     env = 'test'
 
-# Credentials & Endpoints
-cfg = Config(env, './config/config.ini')
-
-# logging
-logging.basicConfig(level=logging.INFO)
-fh = logging.FileHandler(filename='./logs/'+cfg.log_file)
-fh.setLevel(logging.INFO)
-ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+cfg = Config(env, './config/config.ini')  # Credentials & Endpoints
+load_log_setting(cfg.log_file)  # logging
 logger = logging.getLogger(__name__)
-logger.addHandler(fh)
-logger.addHandler(ch)
-
-logger.info('App in {} environment'.format(env))
 
 
 def main(exhibitors_url, custom_fields_url=None):
+    logger.info('App in {} environment'.format(env))
     logger.info('Process Start - {}'.format(datetime.now().strftime('%Y-%m-%d_%H:%M:%S')))
     oem = Oem(exhibitors_url, custom_fields_url)
     db = Algolia(cfg.app_id, cfg.admin_id, cfg.index_name)
