@@ -1,9 +1,9 @@
-## All API Getting
+## All API
 
 import requests
 import time
 import logging
-import json
+# import json
 
 logger = logging.getLogger(__name__+' module')
 
@@ -11,9 +11,12 @@ logger = logging.getLogger(__name__+' module')
 class Oem:
 
     def __init__(self, exhibitor_url, custom_field_url):
-        self.exhibitor = self.call_api(exhibitor_url)
+        self.exhibitor = None
+        self.custom_fields = None
+
+        self.get_exhibitors(exhibitor_url)
         if custom_field_url is not None:
-            self.custom_fields = self.call_api(custom_field_url)
+            self.get_custom_field_pairs(custom_field_url)
 
     def call_api(self, url, attempt=1, max_retries=3):
         if attempt > max_retries:
@@ -31,18 +34,22 @@ class Oem:
             logger.info('Retrying attempt {}'.format(attempt))
             self.call_api(url, attempt=attempt + 1)
 
-    # Turn custom field into dict to update DF column name
-    @ staticmethod
-    def get_custom_field_pairs(data):
-        if type(data) != list:
-            return data
-        pairs = {}
-        for k, v in enumerate(data):
-            pairs[k] = v
-        logger.info('There are {} custom field(s)'.format(len(pairs)))
-        if pairs:
-            logger.info(json.dumps(pairs))
-        return pairs
+    def get_exhibitors(self, exhibitor_url):
+        """ Get exhibitors records from OEM
+        :param exhibitor_url: url string
+        :return: [{ka1:va1,kb1:vb1},{ka2:va2,kb2:vb2}]
+        """
+        self.exhibitor = self.call_api(exhibitor_url)
+        return self
+
+    def get_custom_field_pairs(self, custom_field_url):
+        """ Get custom fields into dict to update DF column name
+        :param custom_field_url: url string
+        :return: dict {k1:v1, k2:v2}
+        """
+        self.custom_fields = self.call_api(custom_field_url)
+        logger.info('Custom fields: {}'.format(self.custom_fields))
+        return self
 
 # def save_json_to_txt (table,name,updated=False):
 #     timestamp = dt.datetime.now().strftime("%Y-%m-%d")

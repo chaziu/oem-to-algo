@@ -15,15 +15,16 @@ class Email:
         self.sender = sender_email
         self.password = password
 
+    # loop through attribute when enumerate
     def __iter__(self):
-        for a,v in self.__dict__.items():
-            yield a,v
+        for attr, value in self.__dict__.items():
+            yield attr, value
 
-    def _payload_to_msg(self,payload,recipient):
-        today = datetime.now().strftime('%Y-%m-%d')
+    def _payload_to_msg(self, payload, recipient):
+        date_stamp = datetime.now().strftime('%Y-%m-%d')
 
         message = MIMEMultipart("alternative")
-        message["Subject"] = "OEM to Algo Report {}".format(today)
+        message["Subject"] = "OEM to Algo Report {}".format(date_stamp)
         message["From"] = self.sender
         message["To"] = recipient
 
@@ -42,9 +43,13 @@ class Email:
         
         {}
         
-        """.format(today, payload.to_create, payload.to_update, payload.to_delete)
+        """\
+        .format(date_stamp,
+                payload.to_create if payload.to_create else 'No records to be created',
+                payload.to_update if payload.to_update else 'No records to be updated',
+                payload.to_delete if payload.to_delete else 'No records to be deleted')
 
-        text = MIMEText(text,"plain")
+        text = MIMEText(text, "plain")
         message.attach(text)
         return message
 
