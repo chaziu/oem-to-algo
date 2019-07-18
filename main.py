@@ -18,12 +18,12 @@ except IndexError:
     env = 'test'
 
 cfg = Config(env, './config/config.ini')  # Credentials & Endpoints
-email = Email(cfg.sender_email, cfg.email_password) #Setup email
-load_log_setting(cfg.log_file)  # logging
+email = Email(cfg.sender_email, cfg.email_password)  # Setup emails
+load_log_setting(cfg.log_file)  # Setup logging
 logger = logging.getLogger(__name__)
 
 
-def main(exhibitors_url: str, custom_fields_url: str = None) -> None:
+def main(exhibitors_url: str = cfg.exhibitor_url, custom_fields_url: str = cfg.custom_field_url) -> None:
     logger.info('App in {} environment'.format(env))
     start = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     logger.info('Process Start - {}'.format(start))
@@ -48,7 +48,7 @@ def main(exhibitors_url: str, custom_fields_url: str = None) -> None:
 
 
 if __name__ == '__main__':
-    main(cfg.exhibitor_url, cfg.custom_field_url)
+    main()
 
 
 

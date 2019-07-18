@@ -15,7 +15,7 @@ class Oem:
         self.custom_fields = None
 
         self.get_exhibitors(exhibitor_url)
-        if custom_field_url is not None:
+        if custom_field_url is not '':
             self.get_custom_field_pairs(custom_field_url)
 
     def call_api(self, url: str, attempt: int = 1, max_retries: int = 3) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
