@@ -5,6 +5,7 @@
   2. Install all dependencies by CLI ```pip install -r requirements.txt```
   
 #### Major Update Log
+  * 2019-07-18 : Added typing
   * 2019-07-16 : Added email notification (Compare Results Only)
   * 2019-07-09 : Needed updated format of config.ini for environment setup
   * 2019-07-04 : Added logging & log saved to my_app.log

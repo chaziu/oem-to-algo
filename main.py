@@ -8,6 +8,7 @@ import logging
 from logs.logging import load_log_setting
 from datetime import datetime
 from config.configuration import Config
+import typing
 
 
 try:
@@ -22,7 +23,7 @@ load_log_setting(cfg.log_file)  # logging
 logger = logging.getLogger(__name__)
 
 
-def main(exhibitors_url, custom_fields_url=None):
+def main(exhibitors_url: str, custom_fields_url: str = None) -> None:
     logger.info('App in {} environment'.format(env))
     start = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     logger.info('Process Start - {}'.format(start))
@@ -37,8 +38,10 @@ def main(exhibitors_url, custom_fields_url=None):
     if delta_records.to_delete:
         db.delete(delta_records.to_delete)
 
-    if any([delta_records.to_create, delta_records.to_create, delta_records.to_create]):
-        email.send_result(cfg.receiver_emails, payload=delta_records)
+    # if any([delta_records.to_create, delta_records.to_create, delta_records.to_create]):
+    #     email.send_result(cfg.receiver_emails, payload=delta_records)
+
+    email.send_result(cfg.receiver_emails, payload=delta_records)
 
     end = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     logger.info('process end - {}'.format(end))

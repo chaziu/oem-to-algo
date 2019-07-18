@@ -3,14 +3,14 @@
 import requests
 import time
 import logging
-# import json
+from typing import Union, List, Dict, Any
 
 logger = logging.getLogger(__name__+' module')
 
 
 class Oem:
 
-    def __init__(self, exhibitor_url, custom_field_url):
+    def __init__(self, exhibitor_url: str, custom_field_url: str) -> None:
         self.exhibitor = None
         self.custom_fields = None
 
@@ -18,7 +18,7 @@ class Oem:
         if custom_field_url is not None:
             self.get_custom_field_pairs(custom_field_url)
 
-    def call_api(self, url, attempt=1, max_retries=3):
+    def call_api(self, url: str, attempt: int = 1, max_retries: int = 3) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
         if attempt > max_retries:
             logger.error('Connection failed')
             raise ConnectionError('Failed to get table from url after {} retries: {}'.format(max_retries,url))
@@ -34,7 +34,7 @@ class Oem:
             logger.info('Retrying attempt {}'.format(attempt))
             self.call_api(url, attempt=attempt + 1)
 
-    def get_exhibitors(self, exhibitor_url):
+    def get_exhibitors(self, exhibitor_url: str) -> "Oem":
         """ Get exhibitors records from OEM
         :param exhibitor_url: url string
         :return: [{ka1:va1,kb1:vb1},{ka2:va2,kb2:vb2}]
@@ -42,7 +42,7 @@ class Oem:
         self.exhibitor = self.call_api(exhibitor_url)
         return self
 
-    def get_custom_field_pairs(self, custom_field_url):
+    def get_custom_field_pairs(self, custom_field_url: str) -> "Oem":
         """ Get custom fields into dict to update DF column name
         :param custom_field_url: url string
         :return: dict {k1:v1, k2:v2}

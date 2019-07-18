@@ -3,7 +3,7 @@ import json
 
 
 class Config:
-    def __init__(self, env, config_path):
+    def __init__(self, env: str, config_path: str) ->None:
         self.config = configparser.ConfigParser()
         self.config.read(config_path)
         self.exhibitor_url = self.config[env]['exhibitor_url']
