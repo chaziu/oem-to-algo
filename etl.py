@@ -1,16 +1,14 @@
 # All the ETL & Data works
 import pandas as pd
 import logging
-import json
+from typing import List, Dict, Union, Any, Optional, Tuple, Callable
 
 logger = logging.getLogger(__name__ + ' module')
-from typing import List, Dict, Union, Any, Optional, Tuple, Callable
 
 
 class Compare:
-
     def __init__(self, new_ex_json: List[Dict],
-                 old_ex_json: Optional[Dict],
+                 old_ex_json: Optional[List[Dict]],
                  pairs: Optional[Dict] = None) -> None:
         if old_ex_json is None:
             df = Data_process(new_ex_json, exhibitor=True, pairs=pairs).df
@@ -21,9 +19,10 @@ class Compare:
             self.to_create, self.to_update, self.to_delete = self.find_delta_records(self.old_ex_df, self.new_ex_df)
             self.to_create, self.to_update, self.to_delete = Data_process.df_to_algolia(self.to_create, self.to_update,
                                                                                         self.to_delete)
+    df_or_none = Union[pd.DataFrame, List[None]]  # Define type
 
     @staticmethod
-    def find_delta_records(old_df: pd.DataFrame, new_df: pd.DataFrame) -> Tuple:
+    def find_delta_records(old_df: pd.DataFrame, new_df: pd.DataFrame) -> Tuple[df_or_none,df_or_none,df_or_none]:
         """ Compare DataFrames to find newly created, deleted & updated records
         :param old_df: Last Version of DataFrame
         :param new_df: New Version of DataFrame
@@ -80,7 +79,7 @@ class Data_process:
         return self
 
     @staticmethod
-    def df_to_algolia(*dfs: pd.DataFrame) -> Union[Tuple, Tuple[Any, Any, Any]]:
+    def df_to_algolia(*dfs: pd.DataFrame) -> Tuple[List, List, List]:
         """ Convert DataFrame into JSON for use in Algolia CUD operation
         :param dfs: *DataFrames
         :return: DataFrames converted to JSON by rows for pushing to Algolia
@@ -125,6 +124,6 @@ class Df:
             pass
         return self
 
-    def modify_col(self, col: Union[str,List[str]], func: Callable[[Any], Any]):
+    def modify_col(self, col: Union[str, List[str]], func: Callable[[Any], Any]):
         self.df[col] = self.df[col].apply(func)
         return self

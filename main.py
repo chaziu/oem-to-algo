@@ -8,8 +8,6 @@ import logging
 from logs.logging import load_log_setting
 from datetime import datetime
 from config.configuration import Config
-import typing
-
 
 try:
     env = 'live' if sys.argv[1] == 'live' else 'test'
@@ -23,7 +21,9 @@ load_log_setting(cfg.log_file)  # Setup logging
 logger = logging.getLogger(__name__)
 
 
-def main(exhibitors_url: str = cfg.exhibitor_url, custom_fields_url: str = cfg.custom_field_url) -> None:
+def main(exhibitors_url: str = cfg.exhibitor_url,
+         custom_fields_url: str = cfg.custom_field_url) -> None:
+
     logger.info('App in {} environment'.format(env))
     start = datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     logger.info('Process Start - {}'.format(start))

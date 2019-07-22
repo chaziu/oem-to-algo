@@ -5,11 +5,12 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import logging
 from etl import Compare
+from typing import Generator, Tuple
 logger = logging.getLogger(__name__+' module')
 
 
 class Email:
-    def __init__(self, sender_email: str, password: str):
+    def __init__(self, sender_email: str, password: str) -> None:
         self.port = 465  # For SSL
         self.smtp_server = "smtp.gmail.com"
         self.context = ssl.create_default_context()
@@ -17,7 +18,7 @@ class Email:
         self.password = password
 
     # loop through attribute when enumerate
-    def __iter__(self):
+    def __iter__(self) -> Generator[Tuple[str, str], None, None]:  # Generator[YieldType,SendType,ReturnType]
         for attr, value in self.__dict__.items():
             yield attr, value
 

@@ -3,7 +3,7 @@
 import requests
 import time
 import logging
-from typing import Union, List, Dict, Any
+from typing import Union, List, Dict, Any, Optional
 
 logger = logging.getLogger(__name__+' module')
 
@@ -15,16 +15,19 @@ class Oem:
         self.custom_fields = None
 
         self.get_exhibitors(exhibitor_url)
-        if custom_field_url is not '':
+        if custom_field_url is not '': # if custom field is not empty on config.ini
             self.get_custom_field_pairs(custom_field_url)
 
-    def call_api(self, url: str, attempt: int = 1, max_retries: int = 3) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
-        if attempt > max_retries:
+    def _call_api(self, url: str,
+                  attempt: int = 1,
+                  max_retries: int = 3) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
+
+        if attempt > max_retries:  # Throw error when attempt more than max_retries setting
             logger.error('Connection failed')
             raise ConnectionError('Failed to get table from url after {} retries: {}'.format(max_retries,url))
         try:
             res = requests.get(url)
-            if res.status_code != 200:
+            if res.status_code != 200:  # Only consider api call successful when status code is 200
                 raise ConnectionError(url + 'Returned server status code ' + str(res.status_code))
             logger.info('Successfully connected to {} '.format(url))
             return res.json()
@@ -32,14 +35,14 @@ class Oem:
             print(e)
             time.sleep(3)
             logger.info('Retrying attempt {}'.format(attempt))
-            self.call_api(url, attempt=attempt + 1)
+            self._call_api(url, attempt=attempt + 1)  # Recursive next attempt
 
     def get_exhibitors(self, exhibitor_url: str) -> "Oem":
         """ Get exhibitors records from OEM
         :param exhibitor_url: url string
         :return: [{ka1:va1,kb1:vb1},{ka2:va2,kb2:vb2}]
         """
-        self.exhibitor = self.call_api(exhibitor_url)
+        self.exhibitor = self._call_api(exhibitor_url)
         return self
 
     def get_custom_field_pairs(self, custom_field_url: str) -> "Oem":
@@ -47,7 +50,7 @@ class Oem:
         :param custom_field_url: url string
         :return: dict {k1:v1, k2:v2}
         """
-        self.custom_fields = self.call_api(custom_field_url)
+        self.custom_fields = self._call_api(custom_field_url)
         logger.info('Custom fields: {}'.format(self.custom_fields))
         return self
 

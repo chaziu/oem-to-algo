@@ -17,9 +17,9 @@ class Deco_db_log:
         self.make_wrappers(self.actions_dic)
 
     @staticmethod
-    def _wrapper_template(action_ing: str, action_ed: str) -> Callable:
-        def middle(func: Callable) -> Callable:
-            def inner(*arg: Any, **kwarg: Any) -> Any:
+    def _wrapper_template(action_ing: str, action_ed: str) -> Callable:  # Generate Decorator template
+        def middle(func: Callable) -> Callable:  # Mid func take target func
+            def inner(*arg: Any, **kwarg: Any) -> Any:  # Inner func take targeted func argument
                 logger.info('{} records ...'.format(action_ing))
                 return_value = func(*arg, **kwarg)
                 logger.info('{} records {}'.format(len(arg[1]), action_ed))  # arg[0] is algo.self
@@ -28,7 +28,7 @@ class Deco_db_log:
             return inner
         return middle
 
-    def make_wrappers(self, actions: Dict[str, List[str, str]]) -> 'make_wrappers':
+    def make_wrappers(self, actions: Dict[str, List[str]]) -> 'Deco_db_log':  # Create methods with actions_dic
         for i, v in actions.items():
             setattr(self, i, self._wrapper_template(v[0], v[1]))
         return self
@@ -37,12 +37,13 @@ class Deco_db_log:
 db_logger = Deco_db_log()
 
 
-class Algolia:
+class Algolia:  # Interface to work with Algolia DB
 
     def __init__(self, app_id: str, admin_id: str, index_name: str) -> None:
         self.client = SearchClient.create(app_id, admin_id)
         self.index = self.client.init_index(index_name)
-        self.current_records = [i for i in self.index.browse_objects({'query': ''})]
+        self.current_records = None
+        self._get_current_records()
 
     @db_logger.create
     def create(self, records: List[Optional[Dict]]) -> None:
@@ -56,4 +57,8 @@ class Algolia:
     @db_logger.update
     def update(self, records: List[Optional[Dict]]) -> None:
         self.index.partial_update_objects(records)
+
+    def _get_current_records(self) -> 'Algolia':
+        self.current_records = [i for i in self.index.browse_objects({'query': ''})]
+        return self
 
