@@ -46,7 +46,7 @@ class Email:
             * {}
         
         """\
-        .format(date_stamp,
+        .split.format(date_stamp,
                 payload.to_create if payload.to_create else 'No records to be created',
                 payload.to_update if payload.to_update else 'No records to be updated',
                 payload.to_delete if payload.to_delete else 'No records to be deleted')
@@ -59,7 +59,7 @@ class Email:
         logger.info('Sending Email')
         with smtplib.SMTP_SSL(self.smtp_server, self.port, context=self.context) as server:
             server.login(self.sender, self.password)
-            for recipient in recipient_emails.split(','):
+            for recipient in recipient_emailt(','):
                 msg = self._payload_to_msg(payload, recipient)
                 server.sendmail(self.sender, recipient, msg.as_string())
                 logger.info('Email sent to {}'.format(recipient))

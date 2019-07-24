@@ -20,7 +20,7 @@ class Oem:
 
     def _call_api(self, url: str,
                   attempt: int = 1,
-                  max_retries: int = 3) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
+                  max_retries: int = 3) -> requests.models.Response:
 
         if attempt > max_retries:  # Throw error when attempt more than max_retries setting
             logger.error('Connection failed')
@@ -30,7 +30,7 @@ class Oem:
             if res.status_code != 200:  # Only consider api call successful when status code is 200
                 raise ConnectionError(url + 'Returned server status code ' + str(res.status_code))
             logger.info('Successfully connected to {} '.format(url))
-            return res.json()
+            return res
         except Exception as e:
             print(e)
             time.sleep(3)
@@ -42,7 +42,7 @@ class Oem:
         :param exhibitor_url: url string
         :return: [{ka1:va1,kb1:vb1},{ka2:va2,kb2:vb2}]
         """
-        self.exhibitor = self._call_api(exhibitor_url)
+        self.exhibitor = Oem._call_api(self,exhibitor_url).json()
         return self
 
     def get_custom_field_pairs(self, custom_field_url: str) -> "Oem":
@@ -50,21 +50,8 @@ class Oem:
         :param custom_field_url: url string
         :return: dict {k1:v1, k2:v2}
         """
-        self.custom_fields = self._call_api(custom_field_url)
+        self.custom_fields = Oem._call_api(self,custom_field_url).json()
         logger.info('Custom fields: {}'.format(self.custom_fields))
         return self
 
-# def save_json_to_txt (table,name,updated=False):
-#     timestamp = dt.datetime.now().strftime("%Y-%m-%d")
-#     with open('./data_log/{}_{}.txt'.format(name, timestamp), 'w') as fh:
-#         fh.write(json.dumps(table))
-#     if updated:
-#         with open('./existing.txt','w') as fh:
-#             fh.write(json.dumps(table))
-#
-#
-# def get_json(path='./existing.txt'):
-#     with open(path, 'r') as fh:
-#         data = json.load(fh)
-#     return data
 

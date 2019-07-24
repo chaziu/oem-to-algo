@@ -56,9 +56,6 @@ class Compare:
             self.to_create, self.to_update, self.to_delete = [], [], []
             return None
 
-
-
-        print(self.new_ex_df_wID)
         # Getting new_df records that is different from the old_df
         to_delete = self.old_ex_df[~self.old_ex_df.index.isin(self.new_ex_df.index)]
         to_create = self.new_ex_df[~self.new_ex_df.index.isin(self.old_ex_df.index)]
