@@ -19,6 +19,8 @@ Handles API requests
 Handles Tables, DataFrame & Data ETL
 
 #### Test Module
+Unit Test for all available in directory [test]
+```python -m unittest```
 Unit Test for functions by modules
 Test Scripts: ```python -m unittest [Test Module]```   
 Example: ```python -m unittest tests.test_etl```
