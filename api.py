@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__+' module')
 class Oem:
 
     def __init__(self, exhibitor_url: str, custom_field_url: str) -> None:
-        self.exhibitor = None
+        self.exhibitors = None
         self.custom_fields = None
 
         self.get_exhibitors(exhibitor_url)
@@ -42,7 +42,7 @@ class Oem:
         :param exhibitor_url: url string
         :return: [{ka1:va1,kb1:vb1},{ka2:va2,kb2:vb2}]
         """
-        self.exhibitor = Oem._call_api(self,exhibitor_url).json()
+        self.exhibitors = Oem._call_api(self, exhibitor_url).json()
         return self
 
     def get_custom_field_pairs(self, custom_field_url: str) -> "Oem":

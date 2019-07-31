@@ -29,7 +29,7 @@ def main(exhibitors_url: str = cfg.exhibitor_url,
     logger.info('Process Start - {}'.format(start))
     oem = Oem(exhibitors_url, custom_fields_url)
     db = Algolia(cfg.app_id, cfg.admin_id, cfg.index_name)
-    delta_records = Compare(oem.exhibitor, db.current_records, oem.custom_fields)
+    delta_records = Compare(oem.exhibitors, db.current_records, oem.custom_fields)
 
     if delta_records.to_create:
         db.create(delta_records.to_create)
