@@ -80,6 +80,60 @@ class Compare:
             logger.info('Records to be overwritten: {}'.format(to_be_overwritten.to_json(orient='records')))
 
 
+class DM_prod_fields:  # Data Massage Products Fields
+    """ Turn multiple product concatenated in a single column and split into multiple columns
+    e.g. {Product Name: Table;Chair;Lamp} => {Product Name 1: Table, Product Name 2: Chair, Product Name 3:Lamp}
+
+    """
+    def __init__(self, df: pd.DataFrame, prod_cols: List[Optional[str]] = None) -> None:
+        self.df = df
+        self.longest_product = 0
+        self.prod_cols = prod_cols if prod_cols is not None \
+                         else ['Product Description', 'Product Image', 'Product Name']
+        self.prod_list_cols = []
+        self.split_products_cols()
+
+    def split_products_cols(self):
+        DM_prod_fields.get_longest_product(self)
+        DM_prod_fields.make_prod_list_cols(self)
+        for col in self.prod_cols:
+            DM_prod_fields.split_cols(self, col)
+        DM_prod_fields.drop_prod_list_cols(self)
+
+    def get_longest_product(self) -> None:  # Counting the longest Product Name column
+        self.longest_product = self.df[self.df['Product Name'].notnull()]['Product Name'].str.split(';').apply(
+            len).max()
+
+    def make_prod_list_cols(self) -> DM_prod_fields:
+        """ Create new cols by turning product cols into list
+        e.g. 'Table;Chair;Lamp' => ['Table', 'Chair', 'Lamp']
+        """
+        for i in self.prod_cols:
+            prod_list_cols = i+' List'  # New Cols e.g. 'Product Name List'
+            self.df[prod_list_cols] = self.df[i].str.split(';')
+            self.prod_list_cols.append(prod_list_cols)
+        return self
+
+    def split_cols(self, col: str) -> DM_prod_fields:
+        def get_val(_list, ind):
+            try:
+                result = _list[ind] if _list[ind] != '' else None
+                return result
+            except IndexError:  # Shorter List Will have index error
+                return None
+            except TypeError:  # nan (empty) field is not list will have type error
+                return None
+
+        for i in range(self.longest_product):
+            self.df['{} {}'.format(col, i+1)] = self.df[col+' List'].apply(get_val, ind=i)
+        return self
+
+    def drop_prod_list_cols(self) -> DM_prod_fields:
+        self.df = self.df.drop(self.prod_list_cols, axis=1)
+        self.prod_list_cols = []
+        return self
+
+
 class Data_process:
 
     def __init__(self, json_data: List[dict],
