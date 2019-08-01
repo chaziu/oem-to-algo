@@ -1,4 +1,5 @@
 # All the ETL & Data works
+from __future__ import annotations
 import pandas as pd
 import logging
 from typing import List, Dict, Union, Any, Optional, Tuple, Callable
@@ -98,7 +99,7 @@ class Data_process:
 
         assert self.df.index.nunique() == self.df.shape[0]  # Asserting index is unique
 
-    def normalize_country_field(self) -> 'Data_process':
+    def normalize_country_field(self) -> Data_process:
         """ Removing trail ; in country field
         :return: self
         """
@@ -108,15 +109,15 @@ class Data_process:
             print('Column {} not availabel in DF'.format(e))
         return self
 
-    def indexing_exhibitor_df(self) -> "Data_process":
+    def indexing_exhibitor_df(self) -> Data_process:
         self.df = self.df.set_index('ref_no')
         return self
 
-    def rename_df_custom_field_column(self, pairs: Dict[str, str]) -> "Data_process":
+    def rename_df_custom_field_column(self, pairs: Dict[str, str]) -> Data_process:
         self.df = self.df.rename(pairs, axis='columns')
         return self
 
-    def drop_df_cols(self, cols_to_drop: Optional[List[str]] = None) -> 'Data_process':
+    def drop_df_cols(self, cols_to_drop: Optional[List[str]] = None) -> Data_process:
         if cols_to_drop is None:
             cols_to_drop = ['contact_no', 'email', 'full_name', 'position']  # Avoid mutable default args
         try:
@@ -126,7 +127,7 @@ class Data_process:
             pass
         return self
 
-    def modify_col(self, col: Union[str, List[str]], func: Callable[[Any], Any]) -> "Data_process":
+    def modify_col(self, col: Union[str, List[str]], func: Callable[[Any], Any]) -> Data_process:
         self.df[col] = self.df[col].apply(func)
         return self
 

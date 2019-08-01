@@ -1,5 +1,5 @@
 # Updating Alogolia index
-
+from __future__ import annotations
 from algoliasearch.search_client import SearchClient
 import json
 from typing import Callable, Any, Dict, List, Optional
@@ -28,7 +28,7 @@ class Deco_db_log:
             return inner
         return middle
 
-    def make_wrappers(self, actions: Dict[str, List[str]]) -> 'Deco_db_log':  # Create methods with actions_dic
+    def make_wrappers(self, actions: Dict[str, List[str]]) -> Deco_db_log:  # Create methods with actions_dic
         for i, v in actions.items():
             setattr(self, i, self._wrapper_template(v[0], v[1]))
         return self
@@ -58,7 +58,7 @@ class Algolia:  # Interface to work with Algolia DB
     def update(self, records: List[Optional[Dict]]) -> None:
         self.index.partial_update_objects(records)
 
-    def _get_current_records(self) -> 'Algolia':
+    def _get_current_records(self) -> Algolia:
         self.current_records = [i for i in self.index.browse_objects({'query': ''})]
         return self
 
