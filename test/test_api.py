@@ -1,4 +1,4 @@
-from unittest import TestCase,mock
+from unittest import TestCase, mock
 from api import Oem
 
 
@@ -16,7 +16,7 @@ class TestCompare(TestCase):
     def test_get_exhibitors(self):
         m = mock.Mock()
         Oem.get_exhibitors(m, 'http://jublia.ubmasia.com/Exhibitor/api/getexhibitorsInfo/2019CPHIK/1000/1/?p=jublia3762')
-        self.assertTrue(type(m.exhibitor[0]) == dict and len(m.exhibitor) > 0)
+        self.assertTrue(type(m.exhibitors[0]) == dict and len(m.exhibitors) > 0)
 
     def test_get_custom_field_pairs(self):
         m = mock.Mock()
